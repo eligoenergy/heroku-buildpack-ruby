@@ -745,13 +745,13 @@ params = CGI.parse(uri.query || "")
 
       old_rubygems_version = @metadata.read(ruby_version_cache).chomp if @metadata.exists?(ruby_version_cache)
       old_stack = @metadata.read(stack_cache).chomp if @metadata.exists?(stack_cache)
-      old_stack ||= DEFAULT_LEGACY_STACK
 
-      @bundler_cache.convert_stack if @bundler_cache.old?
-      @bundler_cache.load
-
-      if !new_app? && @stack != old_stack
-        puts "Purging Cache. Changing stack from #{old_stack} to #{@stack}"
+      if old_stack == @stack
+        @bundler_cache.load
+      elsif old_stack.nil?
+        @bundler_cache.convert_stack
+      else
+        puts "Purging Cache. Changing stack from #{old_stack} to #{@stack}."
         purge_bundler_cache
       end
 
