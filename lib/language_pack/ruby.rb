@@ -455,6 +455,9 @@ WARNING
   # users should be using `bundle pack` instead.
   # https://github.com/heroku/heroku-buildpack-ruby/issues/21
   def remove_vendor_bundle
+    if File.exists?(".bundle/config")
+      FileUtils.rm_rf(".bundle/config")
+    end
     if File.exists?("vendor/bundle")
       warn(<<WARNING)
 Removing `vendor/bundle`.
